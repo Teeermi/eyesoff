@@ -80,7 +80,7 @@ POST /v1/messages?beta=true 200  hid 2 strings, 1 screenshot
 
 Be clear about what this is. It keeps secrets from leaking by accident. It is not a sandbox.
 
-- Detection is a heuristic. It catches known prefixes (`sk_live_`, `ghp_`, `AKIA`, `xoxb-` and a few more) and strings of 20+ characters with digits and mixed case. A short token with no known prefix will get through.
+- Detection is a heuristic. It catches the known prefixes in [`prefixes.txt`](prefixes.txt) and strings of 20+ characters with digits and mixed case. A short token with no known prefix will get through.
 - It also hides things that aren't secrets, like some hashes and base64. The agent sees `[hidden by eyesoff]` and usually works around it.
 - OCR can miss text that is tiny, rotated or broken up in odd ways.
 - An agent that really wants a key can still get it out, for example by encoding it first. eyesoff won't stop that.
@@ -89,11 +89,9 @@ Be clear about what this is. It keeps secrets from leaking by accident. It is no
 - Claude Code's local transcripts in `~/.claude` still contain the original screenshots and output. Only what goes to the API is cleaned.
 - Screenshots are only checked on macOS for now. On Linux and Windows the proxy still runs, but every screenshot is removed instead of checked.
 
-## Tests
+## Contributing
 
-```sh
-cargo test
-```
+Missing a provider? Adding one is a single line in [`prefixes.txt`](prefixes.txt). See [CONTRIBUTING.md](CONTRIBUTING.md).
 
 ## License
 

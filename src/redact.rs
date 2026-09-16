@@ -13,13 +13,11 @@ use crate::ocr;
 pub const HIDDEN: &str = "[hidden by eyesoff]";
 pub const SCREENSHOT_REMOVED: &str = "[screenshot removed by eyesoff: it could not be checked for secrets]";
 
-const PREFIXES: &[&str] = &[
-    "sk_live_", "sk_test_", "rk_live_", "rk_test_", "whsec_", "ghp_", "gho_", "ghu_", "ghs_",
-    "github_pat_", "xoxb-", "xoxp-", "AKIA", "sk-ant-", "sk-proj-", "glpat-", "npm_",
-];
 const SAFE_PREFIXES: &[&str] = &["toolu_", "srvtoolu_", "msg_", "req_"];
 const TEXT_KEYS: &[&str] = &["text", "content", "system"];
 
+static PREFIXES: LazyLock<Vec<&str>> =
+    LazyLock::new(|| include_str!("../prefixes.txt").lines().filter_map(|line| line.split_whitespace().next()).collect());
 static TOKEN: LazyLock<Regex> = LazyLock::new(|| Regex::new(r"[A-Za-z0-9_\-]{16,}").unwrap());
 static CHECKED_IMAGES: LazyLock<Mutex<HashMap<u64, Option<String>>>> = LazyLock::new(Default::default);
 static IMAGE_KEYS: LazyLock<RandomState> = LazyLock::new(RandomState::new);
@@ -45,11 +43,10 @@ pub fn looks_like_secret(word: &str) -> bool {
     if word.contains("://") || word.contains("...") || SAFE_PREFIXES.iter().any(|p| word.starts_with(p)) {
         return false;
     }
-    let length = word.chars().count();
     if let Some(rest) = PREFIXES.iter().find_map(|p| word.strip_prefix(p)) {
-        return length >= 16 && rest.chars().any(|c| c.is_numeric());
+        return rest.chars().count() >= 16 && rest.chars().any(|c| c.is_numeric());
     }
-    length >= 20
+    word.chars().count() >= 20
         && word.chars().filter(|c| c.is_numeric()).count() >= 3
         && word.chars().any(char::is_uppercase)
         && word.chars().any(char::is_lowercase)
@@ -142,6 +139,21 @@ mod tests {
     }
 
     #[test]
+    fn every_listed_prefix_is_caught() {
+        let mut seen = std::collections::HashSet::new();
+        for line in include_str!("../prefixes.txt").lines().filter(|l| !l.trim().is_empty()) {
+            let (prefix, description) = line.split_once(char::is_whitespace).unwrap_or((line, ""));
+            assert!(!description.trim().is_empty(), "prefixes.txt: {prefix:?} needs a description after it");
+            assert!(
+                prefix.len() >= 3 && prefix.chars().all(|c| c.is_ascii_alphanumeric() || c == '_' || c == '-'),
+                "prefixes.txt: {prefix:?} can only use letters, digits, _ and -"
+            );
+            assert!(seen.insert(prefix), "prefixes.txt: {prefix:?} is listed twice");
+            assert_eq!(hide(&format!("{prefix}abcdefghijklmno1")), (HIDDEN.to_string(), 1), "prefixes.txt: {prefix:?} was not caught");
+        }
+    }
+
+    #[test]
     fn leaves_ordinary_text_alone() {
         for text in [
             "8a461400-2f98-41a5-8e47-00f596ad2124",
@@ -151,6 +163,7 @@ mod tests {
             "toolu_01XyZ9aB8cD7eF6gH5iJ4kL3",
             "pk_live_...9f3a",
             "set npm_config_registry or YARN_NPM_REGISTRY_SERVER",
+            "ops_metrics_2024_q1",
             "The quick brown fox jumps over the lazy dog 42 times.",
         ] {
             assert_eq!(hide(text), (text.to_string(), 0), "{text}");

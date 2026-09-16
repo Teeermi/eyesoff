@@ -1,0 +1,57 @@
+AGE-SECRET-KEY-1  age secret key
+sk-ant-           Anthropic API key
+ATATT3            Atlassian API token
+AKIA              AWS access key ID
+ASIA              AWS temporary access key ID
+dop_v1_           DigitalOcean personal access token
+doo_v1_           DigitalOcean OAuth token
+dor_v1_           DigitalOcean refresh token
+figd_             Figma personal access token
+ghp_              GitHub personal access token
+github_pat_       GitHub fine-grained personal access token
+gho_              GitHub OAuth token
+ghu_              GitHub user-to-server token
+ghs_              GitHub server-to-server token
+ghr_              GitHub refresh token
+glpat-            GitLab personal access token
+gldt-             GitLab deploy token
+glrt-             GitLab runner token
+AIza              Google API key
+glsa_             Grafana service account token
+gsk_              Groq API key
+HRKU-             Heroku API key
+hf_               Hugging Face token
+lin_api_          Linear API key
+ntn_              Notion integration token
+npm_              npm access token
+ops_              1Password service account token
+sk-proj-          OpenAI project API key
+sk-svcacct-       OpenAI service account key
+sk-admin-         OpenAI admin key
+pplx-             Perplexity API key
+PMAK-             Postman API key
+pul-              Pulumi access token
+pypi-             PyPI API token
+r8_               Replicate API token
+sntrys_           Sentry organization auth token
+sntryu_           Sentry user auth token
+shpat_            Shopify admin API access token
+shpca_            Shopify custom app access token
+shppa_            Shopify private app access token
+shpss_            Shopify shared secret
+xoxb-             Slack bot token
+xoxp-             Slack user token
+xoxa-             Slack app token
+xoxe-             Slack refresh token
+xapp-             Slack app-level token
+sq0atp-           Square access token
+sq0csp-           Square application secret
+sk_live_          Stripe live secret key
+sk_test_          Stripe test secret key
+rk_live_          Stripe live restricted key
+rk_test_          Stripe test restricted key
+whsec_            Stripe webhook signing secret
+sbp_              Supabase personal access token
+sb_secret_        Supabase secret API key
+tskey-            Tailscale auth or API key
+xai-              xAI API key
