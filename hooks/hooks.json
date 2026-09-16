@@ -1,14 +1,13 @@
 {
-  "description": "Warns at session start if eyesoff isn't actually filtering this session's requests.",
+  "description": "Starts the eyesoff proxy if it isn't running and tells Claude how to handle keys, or says how to finish setup.",
   "hooks": {
     "SessionStart": [
       {
         "hooks": [
           {
             "type": "command",
-            "command": "sh",
-            "args": ["${CLAUDE_PLUGIN_ROOT}/hooks/session-start.sh"],
-            "timeout": 3
+            "command": "sh \"${CLAUDE_PLUGIN_ROOT}/hooks/session-start.sh\"",
+            "timeout": 10
           }
         ]
       }
