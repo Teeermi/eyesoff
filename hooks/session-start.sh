@@ -1,7 +1,4 @@
 #!/bin/sh
-# Tells the agent, via SessionStart additionalContext, when secrets aren't
-# actually being filtered this session - either eyesoff isn't in the
-# ANTHROPIC_BASE_URL path, or it's configured but not running.
 set -eu
 
 if [ "${ANTHROPIC_BASE_URL:-}" != "http://127.0.0.1:8787" ]; then
