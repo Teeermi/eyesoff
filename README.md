@@ -58,7 +58,7 @@ Then tell Claude:
 set up eyesoff
 ```
 
-Claude downloads the eyesoff binary, starts the proxy and points Claude Code at it in `~/.claude/settings.json`. Restart Claude Code and you're done. From then on the plugin starts the proxy when a session begins, in case it isn't running, and gives Claude the rules for handling keys.
+Claude downloads the eyesoff binary, starts the proxy and points Claude Code at it in `~/.claude/settings.json`. Claude Code starts using the proxy right away, even in sessions that are already open. Restart it once so the plugin can give Claude the rules for handling keys. From then on the plugin starts the proxy when a session begins, in case it isn't running, and hands Claude those rules.
 
 <br>
 
@@ -261,7 +261,21 @@ No. Drive the browser from Claude Code (the Claude in Chrome integration). The s
 <details>
 <summary><b>How do I uninstall it?</b></summary>
 <br>
-Remove <code>ANTHROPIC_BASE_URL</code> from <code>~/.claude/settings.json</code> first, otherwise Claude Code can't reach the API once eyesoff is gone. Then run <code>/plugin uninstall eyesoff@eyesoff</code> and delete the binary: <code>~/.local/bin/eyesoff</code> on macOS and Linux, <code>%LOCALAPPDATA%\Programs\eyesoff</code> on Windows, or <code>sudo apt remove eyesoff</code> if you installed the .deb.
+
+Run this in a terminal outside Claude Code:
+
+```sh
+curl -fsSL https://raw.githubusercontent.com/Teeermi/eyesoff/main/uninstall.sh | sh
+```
+
+On Windows (PowerShell):
+
+```powershell
+irm https://raw.githubusercontent.com/Teeermi/eyesoff/main/uninstall.ps1 | iex
+```
+
+It takes eyesoff out of `~/.claude/settings.json` first and only then removes the plugin, stops the proxy and deletes the binary, so Claude Code can still reach the API afterwards. Restart any Claude Code sessions that are still open.
+
 </details>
 
 <details>

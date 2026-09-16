@@ -2,6 +2,7 @@ mod ocr;
 mod proxy;
 mod redact;
 mod secrets;
+mod uninstall;
 
 use std::path::PathBuf;
 use std::process::ExitCode;
@@ -30,12 +31,15 @@ enum Cmd {
         #[arg(last = true)]
         command: Vec<String>,
     },
+    #[command(hide = true)]
+    Uninstall,
 }
 
 fn main() -> ExitCode {
     let result = match Cli::parse().command {
         Cmd::Start { port } => proxy::start(port),
         Cmd::Paste { name, env_file, command } => secrets::paste_from_clipboard(&name, env_file.as_deref(), &command),
+        Cmd::Uninstall => uninstall::remove_from_claude_settings(),
     };
     match result {
         Ok(()) => ExitCode::SUCCESS,
