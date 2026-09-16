@@ -46,8 +46,8 @@ pub fn looks_like_secret(word: &str) -> bool {
         return false;
     }
     let length = word.chars().count();
-    if length >= 16 && PREFIXES.iter().any(|p| word.starts_with(p)) {
-        return true;
+    if let Some(rest) = PREFIXES.iter().find_map(|p| word.strip_prefix(p)) {
+        return length >= 16 && rest.chars().any(|c| c.is_numeric());
     }
     length >= 20
         && word.chars().filter(|c| c.is_numeric()).count() >= 3
@@ -150,6 +150,7 @@ mod tests {
             "mcp__claude_ai_Google_Calendar__complete_authentication",
             "toolu_01XyZ9aB8cD7eF6gH5iJ4kL3",
             "pk_live_...9f3a",
+            "set npm_config_registry or YARN_NPM_REGISTRY_SERVER",
             "The quick brown fox jumps over the lazy dog 42 times.",
         ] {
             assert_eq!(hide(text), (text.to_string(), 0), "{text}");
