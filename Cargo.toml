@@ -1,6 +1,6 @@
 [package]
 name = "eyesoff"
-version = "0.1.1"
+version = "0.1.2"
 edition = "2024"
 description = "Keeps secrets out of what your coding agent sends to the model"
 license = "MIT"
