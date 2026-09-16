@@ -77,7 +77,7 @@ Claude downloads the eyesoff binary, starts the proxy and points Claude Code at 
 
 ### Screenshots
 - Reads the image on your Mac with the Vision framework and draws a black box over anything that looks like a key, including a key that wraps onto a second line
-- Replaces a screenshot it can't check with a note instead of sending it
+- Doesn't send a screenshot it can't check, including one whose text is too small to read, and asks Claude to take it again at full size or zoom in
 
 </td>
 <td width="50%" valign="top">
@@ -246,7 +246,7 @@ eyesoff is built to catch keys that would otherwise leak by accident, and it has
 
 - Detection is a heuristic. It catches the known prefixes in [`prefixes.txt`](prefixes.txt) and strings of 20+ characters with digits and mixed case. A short token with no known prefix will get through.
 - It also hides things that aren't secrets, like some hashes and base64. The agent sees `[hidden by eyesoff]` and usually works around it.
-- OCR can miss text that is tiny, rotated or broken up in odd ways. Scaled-down screenshots, like the ones Claude takes of a narrow browser window, are the most common case.
+- OCR can miss text that is rotated or broken up in odd ways. Lines it can't read with confidence get a black box, and a screenshot with too many of them, usually one that was scaled down, isn't sent at all.
 - An agent that really wants a key can still get it out, for example by encoding it first. eyesoff won't stop that.
 - Clipboard managers keep history. Exclude your browser in yours, or delete the entry.
 - Claude Code's local transcripts in `~/.claude` still contain the original screenshots and output. Only what goes to the API is cleaned.

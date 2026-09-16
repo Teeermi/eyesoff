@@ -21,10 +21,30 @@ pub struct Word {
 pub struct Line {
     pub bounds: Rect,
     pub words: Vec<Word>,
+    pub confidence: f32,
 }
 
+#[derive(Debug)]
+pub struct Unreadable {
+    pub unreadable: usize,
+    pub lines: usize,
+}
+
+impl std::fmt::Display for Unreadable {
+    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
+        write!(f, "{} of {} lines in a screenshot were too small or blurry to read, so it was not sent", self.unreadable, self.lines)
+    }
+}
+
+impl std::error::Error for Unreadable {}
+
 pub fn cover_secrets(image: &[u8]) -> Result<Option<Vec<u8>>> {
-    let boxes = secret_boxes(&platform::recognize(image)?);
+    let lines = platform::recognize(image)?;
+    if let Some(error) = unreadable(&lines) {
+        return Err(error.into());
+    }
+    let mut boxes = secret_boxes(&lines);
+    boxes.extend(lines.iter().filter(|line| line.confidence < SURE).map(|line| line.bounds));
     if boxes.is_empty() {
         return Ok(None);
     }
@@ -44,6 +64,13 @@ pub fn cover_secrets(image: &[u8]) -> Result<Option<Vec<u8>>> {
     let mut png = Cursor::new(Vec::new());
     pixels.write_to(&mut png, ImageFormat::Png)?;
     Ok(Some(png.into_inner()))
+}
+
+const SURE: f32 = 0.99;
+
+fn unreadable(lines: &[Line]) -> Option<Unreadable> {
+    let unreadable = lines.iter().filter(|line| line.confidence < SURE).count();
+    (unreadable > 0 && unreadable * 100 >= lines.len() * 15).then_some(Unreadable { unreadable, lines: lines.len() })
 }
 
 fn secret_boxes(lines: &[Line]) -> Vec<Rect> {
@@ -113,7 +140,7 @@ mod platform {
                         Word { text: m.as_str().to_string(), bounds }
                     })
                     .collect();
-                lines.push(Line { bounds, words });
+                lines.push(Line { bounds, words, confidence: candidate.confidence() });
             }
             Ok(lines)
         })
@@ -145,10 +172,20 @@ mod tests {
         let second = Rect { x: 0.1, y: 0.221, width: 0.1, height: 0.02 };
         let far = Rect { x: 0.1, y: 0.60, width: 0.1, height: 0.02 };
         let lines = vec![
-            Line { bounds: first, words: vec![word(concat!("sk_", "live_", "51HxQ7vK2mNp8RtL4wYz"), first)] },
-            Line { bounds: second, words: vec![word("WcywtDb4dPDVBP", second)] },
-            Line { bounds: far, words: vec![word("Settings", far)] },
+            Line { bounds: first, words: vec![word(concat!("sk_", "live_", "51HxQ7vK2mNp8RtL4wYz"), first)], confidence: 1.0 },
+            Line { bounds: second, words: vec![word("WcywtDb4dPDVBP", second)], confidence: 1.0 },
+            Line { bounds: far, words: vec![word("Settings", far)], confidence: 1.0 },
         ];
         assert_eq!(secret_boxes(&lines), vec![first, second]);
+    }
+
+    #[test]
+    fn refuses_screenshots_with_too_much_unreadable_text() {
+        let line = |confidence| Line { bounds: Rect { x: 0.1, y: 0.1, width: 0.5, height: 0.02 }, words: vec![], confidence };
+        assert!(unreadable(&[line(1.0), line(1.0), line(1.0), line(1.0), line(1.0), line(0.5)]).is_some());
+        assert!(unreadable(&[line(0.3)]).is_some());
+        assert!(unreadable(&[line(1.0), line(1.0), line(1.0), line(1.0), line(1.0), line(1.0), line(0.3)]).is_none());
+        assert!(unreadable(&[line(1.0), line(1.0)]).is_none());
+        assert!(unreadable(&[]).is_none());
     }
 }

@@ -12,6 +12,8 @@ use crate::ocr;
 
 pub const HIDDEN: &str = "[hidden by eyesoff]";
 pub const SCREENSHOT_REMOVED: &str = "[screenshot removed by eyesoff: it could not be checked for secrets]";
+pub const SCREENSHOT_UNREADABLE: &str =
+    "[screenshot removed by eyesoff: its text is too small to check for secrets. Take it again at full size, or zoom in on the part you need]";
 
 const SAFE_PREFIXES: &[&str] = &["toolu_", "srvtoolu_", "msg_", "req_"];
 const TEXT_KEYS: &[&str] = &["text", "content", "system"];
@@ -19,7 +21,9 @@ const TEXT_KEYS: &[&str] = &["text", "content", "system"];
 static PREFIXES: LazyLock<Vec<&str>> =
     LazyLock::new(|| include_str!("../prefixes.txt").lines().filter_map(|line| line.split_whitespace().next()).collect());
 static TOKEN: LazyLock<Regex> = LazyLock::new(|| Regex::new(r"[A-Za-z0-9_\-]{16,}").unwrap());
-static CHECKED_IMAGES: LazyLock<Mutex<HashMap<u64, Option<String>>>> = LazyLock::new(Default::default);
+type Checked = Result<Option<String>, &'static str>;
+
+static CHECKED_IMAGES: LazyLock<Mutex<HashMap<u64, Checked>>> = LazyLock::new(Default::default);
 static IMAGE_KEYS: LazyLock<RandomState> = LazyLock::new(RandomState::new);
 
 #[derive(Default, Debug, PartialEq)]
@@ -98,22 +102,27 @@ fn checked_image(value: &Value, stats: &mut Stats) -> Option<Value> {
             block["source"] = json!({"type": "base64", "media_type": "image/png", "data": png});
             Some(block)
         }
-        Err(error) => {
-            eprintln!("eyesoff: {error:#}");
+        Err(note) => {
             stats.screenshots += 1;
-            Some(json!({"type": "text", "text": SCREENSHOT_REMOVED}))
+            Some(json!({"type": "text", "text": note}))
         }
     }
 }
 
-fn cover_image(data: &str) -> Result<Option<String>> {
+fn cover_image(data: &str) -> Checked {
     let key = IMAGE_KEYS.hash_one(data);
     if let Some(known) = CHECKED_IMAGES.lock().unwrap().get(&key) {
-        return Ok(known.clone());
+        return known.clone();
     }
-    let covered = ocr::cover_secrets(&BASE64.decode(data)?)?.map(|png| BASE64.encode(png));
-    CHECKED_IMAGES.lock().unwrap().insert(key, covered.clone());
-    Ok(covered)
+    let checked = match BASE64.decode(data).map_err(anyhow::Error::from).and_then(|raw| ocr::cover_secrets(&raw)) {
+        Ok(png) => Ok(png.map(|png| BASE64.encode(png))),
+        Err(error) => {
+            eprintln!("eyesoff: {error:#}");
+            Err(if error.is::<ocr::Unreadable>() { SCREENSHOT_UNREADABLE } else { SCREENSHOT_REMOVED })
+        }
+    };
+    CHECKED_IMAGES.lock().unwrap().insert(key, checked.clone());
+    checked
 }
 
 #[cfg(test)]
@@ -219,5 +228,19 @@ mod tests {
         assert_eq!(block["source"]["media_type"], "image/png");
         let covered = BASE64.decode(block["source"]["data"].as_str().unwrap()).unwrap();
         assert!(ocr::cover_secrets(&covered).unwrap().is_none(), "text still readable after covering");
+    }
+
+    #[cfg(target_os = "macos")]
+    #[test]
+    fn removes_screenshots_too_small_to_read() {
+        let full = image::load_from_memory(include_bytes!("../testdata/dashboard.jpg")).unwrap();
+        let small = full.resize(512, 512, image::imageops::FilterType::Triangle);
+        let mut jpeg = std::io::Cursor::new(Vec::new());
+        small.write_to(&mut jpeg, image::ImageFormat::Jpeg).unwrap();
+        let mut block = image_block(&jpeg.into_inner());
+        let mut stats = Stats::default();
+        scrub(&mut block, None, &mut stats);
+        assert_eq!(block, json!({"type": "text", "text": SCREENSHOT_UNREADABLE}));
+        assert_eq!(stats.screenshots, 1);
     }
 }
