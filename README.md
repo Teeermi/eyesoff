@@ -175,23 +175,10 @@ irm https://raw.githubusercontent.com/Teeermi/eyesoff/main/install.ps1 | iex
 cargo install --git https://github.com/Teeermi/eyesoff
 ```
 
-Start the proxy and leave it running:
+The curl and PowerShell installers start the proxy and point Claude Code at it in `~/.claude/settings.json`. After the Debian or source install, do that with:
 
 ```sh
-eyesoff start
-```
-
-Point Claude Code at it in `~/.claude/settings.json`:
-
-```json
-{
-  "env": {
-    "ANTHROPIC_BASE_URL": "http://127.0.0.1:8787"
-  },
-  "permissions": {
-    "deny": ["Bash(pbpaste *)"]
-  }
-}
+eyesoff setup
 ```
 
 Tell the agent how to handle keys, for example in `~/.claude/CLAUDE.md`:
@@ -214,6 +201,8 @@ run `eyesoff paste NAME -- <command>`, e.g. `eyesoff paste API_TOKEN -- wrangler
 ## Commands
 
 </div>
+
+`eyesoff setup` starts the proxy if it isn't running, then adds `ANTHROPIC_BASE_URL` and a `pbpaste` deny rule to `~/.claude/settings.json`. It leaves the file alone if the proxy won't start or `ANTHROPIC_BASE_URL` already points somewhere else.
 
 `eyesoff start [--port 8787]` runs the proxy. Each request gets one log line, with a note when something was hidden:
 

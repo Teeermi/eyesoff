@@ -12,3 +12,4 @@ if (-not (($userPath -split ';') -contains $dir)) {
 }
 
 Write-Host "eyesoff installed to $dir\eyesoff.exe. Open a new terminal to use it."
+& (Join-Path $dir 'eyesoff.exe') setup

@@ -29,3 +29,4 @@ case ":$PATH:" in
   *":$dir:"*) ;;
   *) echo "$dir is not on your PATH. Add it with: echo 'export PATH=\"$dir:\$PATH\"' >> $rc" ;;
 esac
+"$dir/eyesoff" setup

@@ -10,39 +10,25 @@ description: >-
 
 # Setting up eyesoff
 
-Do every step yourself, in order. Never point Claude Code at the proxy before
-it is confirmed running: with `ANTHROPIC_BASE_URL` set and nothing listening,
-Claude Code can't reach the API at all.
+Do every step yourself, in order.
 
 1. Run `eyesoff --version`. If it isn't found, also try `~/.local/bin/eyesoff`
-   and, on Windows, `$LOCALAPPDATA/Programs/eyesoff/eyesoff.exe`. If it's
-   missing, install it:
+   and, on Windows, `$LOCALAPPDATA/Programs/eyesoff/eyesoff.exe`.
+2. If it's missing, install it. The installer also starts the proxy and points
+   Claude Code at it in `~/.claude/settings.json`:
    - macOS or Linux: `curl -fsSL https://raw.githubusercontent.com/Teeermi/eyesoff/main/install.sh | sh`
    - Windows: `powershell -NoProfile -Command "irm https://raw.githubusercontent.com/Teeermi/eyesoff/main/install.ps1 | iex"`
 
-   If the install directory isn't on PATH in this session yet, use the full
-   path to the binary for the next step.
-2. Check whether the proxy is listening:
-   `curl -s -o /dev/null --max-time 1 http://127.0.0.1:8787; echo $?`.
-   Any exit code except 7 means it is. If it isn't, start it detached so it
-   outlives this session:
-   `nohup eyesoff start </dev/null >"${TMPDIR:-/tmp}/eyesoff.log" 2>&1 &`,
-   wait a second and check again. Stop and report the log if it still isn't
-   listening.
-3. Merge this into `~/.claude/settings.json`, creating the file if needed.
-   Keep every existing key and append to an existing `deny` list instead of
-   replacing it:
-   ```json
-   {
-     "env": { "ANTHROPIC_BASE_URL": "http://127.0.0.1:8787" },
-     "permissions": { "deny": ["Bash(pbpaste *)"] }
-   }
-   ```
-   Auto mode may deny this edit because it changes where Claude Code sends
-   requests. If it does, don't retry and don't print the user's existing
-   settings. Tell them the change needs their approval: switch out of auto mode
-   with Shift+Tab and say "set up eyesoff" again, or add the two keys above
-   themselves.
+   If it's already installed, run `eyesoff setup` instead, with the full path
+   to the binary if it isn't on PATH.
+
+   Auto mode may deny this because it changes where Claude Code sends
+   requests. If it does, don't retry and don't edit the settings yourself. Ask
+   the user to run the same command by typing it after `!`, for example
+   `! eyesoff setup`.
+3. If setup fails, report its output and stop. It leaves the settings alone
+   when the proxy won't start or `ANTHROPIC_BASE_URL` already points somewhere
+   else.
 4. Tell the user eyesoff is set up. Claude Code picks up the new API address
    right away, including in sessions that are already open, so the proxy must
    stay running. Ask them to restart Claude Code once so the plugin can give
