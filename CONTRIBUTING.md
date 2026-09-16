@@ -29,6 +29,7 @@ If eyesoff hides something that isn't a secret and it gets in your agent's way, 
 ## Working on the code
 
 ```sh
+cargo fmt
 cargo test
 cargo clippy --all-targets
 ```

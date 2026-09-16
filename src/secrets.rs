@@ -31,11 +31,8 @@ pub fn paste(name: &str, value: &str, env_file: Option<&Path>, command: &[String
             Ok(format!("{name} saved to {} ({length} chars)", path.display()))
         }
         (None, [program, args @ ..]) => {
-            let mut child = Command::new(program)
-                .args(args)
-                .stdin(Stdio::piped())
-                .spawn()
-                .with_context(|| format!("could not run `{program}`"))?;
+            let mut child =
+                Command::new(program).args(args).stdin(Stdio::piped()).spawn().with_context(|| format!("could not run `{program}`"))?;
             let written = child.stdin.take().unwrap().write_all(value.as_bytes());
             let status = child.wait()?;
             if !status.success() || written.is_err() {

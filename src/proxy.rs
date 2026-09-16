@@ -12,17 +12,15 @@ use crate::redact::{Stats, scrub_body};
 
 const UPSTREAM: &str = "https://api.anthropic.com";
 const MAX_BODY: usize = 64 * 1024 * 1024;
-const HOP_HEADERS: &[&str] = &[
-    "host", "connection", "keep-alive", "transfer-encoding", "content-length", "proxy-connection", "upgrade", "te", "trailer",
-];
+const HOP_HEADERS: &[&str] =
+    &["host", "connection", "keep-alive", "transfer-encoding", "content-length", "proxy-connection", "upgrade", "te", "trailer"];
 
 pub fn start(port: u16) -> Result<()> {
     tokio::runtime::Runtime::new()?.block_on(async {
         let client = reqwest::Client::builder().connect_timeout(Duration::from_secs(30)).build()?;
         let app = Router::new().fallback(forward).with_state(client);
-        let listener = tokio::net::TcpListener::bind(("127.0.0.1", port))
-            .await
-            .with_context(|| format!("could not listen on 127.0.0.1:{port}"))?;
+        let listener =
+            tokio::net::TcpListener::bind(("127.0.0.1", port)).await.with_context(|| format!("could not listen on 127.0.0.1:{port}"))?;
         println!("eyesoff is listening on http://127.0.0.1:{port}");
         axum::serve(listener, app).await?;
         Ok(())
@@ -36,11 +34,7 @@ async fn forward(State(client): State<reqwest::Client>, request: Request) -> Res
         return error(StatusCode::PAYLOAD_TOO_LARGE, "eyesoff could not read the request body");
     };
 
-    let is_json = parts
-        .headers
-        .get(header::CONTENT_TYPE)
-        .and_then(|v| v.to_str().ok())
-        .is_some_and(|v| v.contains("json"));
+    let is_json = parts.headers.get(header::CONTENT_TYPE).and_then(|v| v.to_str().ok()).is_some_and(|v| v.contains("json"));
     let mut stats = Stats::default();
     if is_json && !body.is_empty() {
         let raw = body.clone();
@@ -74,9 +68,7 @@ async fn forward(State(client): State<reqwest::Client>, request: Request) -> Res
     for (name, value) in &without_hop_headers(upstream.headers()) {
         response = response.header(name, value);
     }
-    response
-        .body(Body::from_stream(upstream.bytes_stream()))
-        .unwrap_or_else(|e| error(StatusCode::BAD_GATEWAY, &e.to_string()))
+    response.body(Body::from_stream(upstream.bytes_stream())).unwrap_or_else(|e| error(StatusCode::BAD_GATEWAY, &e.to_string()))
 }
 
 fn without_hop_headers(headers: &HeaderMap) -> HeaderMap {

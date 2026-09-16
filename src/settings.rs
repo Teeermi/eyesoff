@@ -192,9 +192,13 @@ mod tests {
         });
         assert!(remove_eyesoff(&mut settings));
         assert_eq!(settings, json!({"permissions": {"allow": ["Bash(ls *)"], "deny": ["Bash(rm *)"]}, "model": "opus"}));
-        assert_eq!(serde_json::to_string(&settings).unwrap(), r#"{"permissions":{"allow":["Bash(ls *)"],"deny":["Bash(rm *)"]},"model":"opus"}"#);
+        assert_eq!(
+            serde_json::to_string(&settings).unwrap(),
+            r#"{"permissions":{"allow":["Bash(ls *)"],"deny":["Bash(rm *)"]},"model":"opus"}"#
+        );
 
-        let mut settings = json!({"env": {"ANTHROPIC_BASE_URL": "http://127.0.0.1:8787", "DEBUG": "1"}, "permissions": {"deny": ["Bash(pbpaste *)"]}});
+        let mut settings =
+            json!({"env": {"ANTHROPIC_BASE_URL": "http://127.0.0.1:8787", "DEBUG": "1"}, "permissions": {"deny": ["Bash(pbpaste *)"]}});
         assert!(remove_eyesoff(&mut settings));
         assert_eq!(settings, json!({"env": {"DEBUG": "1"}}));
 

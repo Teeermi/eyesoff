@@ -12,8 +12,7 @@ use crate::ocr;
 
 pub const HIDDEN: &str = "[hidden by eyesoff]";
 pub const SCREENSHOT_REMOVED: &str = "[screenshot removed by eyesoff: it could not be checked for secrets]";
-pub const SCREENSHOT_UNREADABLE: &str =
-    "[screenshot removed by eyesoff: its text is too small to check for secrets. Take it again at full size, or zoom in on the part you need]";
+pub const SCREENSHOT_UNREADABLE: &str = "[screenshot removed by eyesoff: its text is too small to check for secrets. Take it again at full size, or zoom in on the part you need]";
 
 const SAFE_PREFIXES: &[&str] = &["toolu_", "srvtoolu_", "msg_", "req_"];
 const TEXT_KEYS: &[&str] = &["text", "content", "system"];
