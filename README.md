@@ -22,14 +22,21 @@ eyesoff is a single binary written in Rust, tested in CI on macOS, Linux and Win
 
 ```sh
 brew tap Teeermi/eyesoff https://github.com/Teeermi/eyesoff && brew install eyesoff   # macOS
-cargo install --git https://github.com/Teeermi/eyesoff                                # anywhere
+cargo install --git https://github.com/Teeermi/eyesoff                                # Linux, Windows, or macOS without brew
 ```
 
 ## Set up Claude Code
 
-The [`eyesoff` plugin](https://github.com/Teeermi/eyesoff/tree/main/skills/eyesoff-setup) can do the steps below for you (`/plugin marketplace add Teeermi/eyesoff`, then `/plugin install eyesoff@eyesoff`, then ask it to set up eyesoff) and warns you mid-session if the proxy stops running. It can't flip `ANTHROPIC_BASE_URL` for the session that installs it, though — that's fixed at startup, so either way you restart Claude Code once after this is in place.
+The [`eyesoff` plugin](https://github.com/Teeermi/eyesoff/tree/main/skills/eyesoff-setup) can do the steps below for you and warns you mid-session if the proxy stops running:
 
-Start the proxy and leave it running:
+```
+/plugin marketplace add Teeermi/eyesoff
+/plugin install eyesoff@eyesoff
+```
+
+Then ask Claude Code to set up eyesoff. It can't flip `ANTHROPIC_BASE_URL` for the session that installs it, though — that's fixed at startup, so either way you restart Claude Code once after this is in place.
+
+Or do it by hand. Start the proxy and leave it running:
 
 ```sh
 eyesoff start
