@@ -1,6 +1,6 @@
 {
   "name": "eyesoff",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Keep secrets out of what Claude Code sends to the model. Installs eyesoff, points Claude Code at it, starts the proxy each session and tells Claude how to handle keys.",
   "author": {
     "name": "Termi",
