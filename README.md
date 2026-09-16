@@ -17,20 +17,14 @@
 
 <br>
 
-<table align="center">
-<tr>
-<td align="center" width="50%">
-  <img src="assets/before.jpg" alt="A dashboard screenshot with a Stripe secret key and an API token in plain view" />
+<div align="center">
+  <img src="assets/demo.gif" alt="Claude Code sees your API keys: cat .env prints a Stripe key, a black bar covers it and it turns into [hidden by eyesoff]." width="900" />
   <br>
-  <strong>What Claude Code captures</strong>
-</td>
-<td align="center" width="50%">
-  <img src="assets/after.jpg" alt="The same screenshot with both secrets covered by black boxes" />
   <br>
-  <strong>What the model receives</strong>
-</td>
-</tr>
-</table>
+  <a href="assets/demo.mp4"><b>▶ Watch the 1-minute demo</b></a>: installing the plugin, setting it up, and Claude creating a GitHub token it never sees.
+</div>
+
+<br>
 
 <p align="center">
 A small local proxy between Claude Code and the Anthropic API.<br>
@@ -113,7 +107,28 @@ Claude downloads the eyesoff binary, starts the proxy and points Claude Code at 
 
 ## How it works
 
+</div>
+
 <br>
+
+<table align="center">
+<tr>
+<td align="center" width="50%">
+  <img src="assets/before.png" alt="GitHub's personal access token page showing a freshly created token in plain view" />
+  <br>
+  <strong>What Claude Code captures</strong>
+</td>
+<td align="center" width="50%">
+  <img src="assets/after.png" alt="The same screenshot with the token covered by a black box" />
+  <br>
+  <strong>What the model receives</strong>
+</td>
+</tr>
+</table>
+
+<br>
+
+<div align="center">
 
 <img src="assets/diagram.svg" alt="Claude Code sends text and screenshots to eyesoff on 127.0.0.1:8787, which strips secrets before forwarding to api.anthropic.com. Responses pass back untouched." width="720" />
 
