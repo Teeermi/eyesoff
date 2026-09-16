@@ -18,10 +18,10 @@
 <br>
 
 <div align="center">
-  <img src="assets/demo.gif" alt="Claude Code sees your API keys: cat .env prints a Stripe key, a black bar covers it and it turns into [hidden by eyesoff]." width="900" />
+  <a href="https://cdn.jsdelivr.net/gh/Teeermi/eyesoff@v0.1.1/assets/demo.mp4"><img src="assets/demo.gif" alt="Claude Code sees your API keys: cat .env prints a Stripe key, a black bar covers it and it turns into [hidden by eyesoff]." width="900" /></a>
   <br>
   <br>
-  <a href="https://github.com/Teeermi/eyesoff/raw/main/assets/demo.mp4"><b>▶ Download the 1-minute demo</b></a> (MP4, 6 MB): installing the plugin, setting it up, and Claude creating a GitHub token it never sees.
+  <a href="https://cdn.jsdelivr.net/gh/Teeermi/eyesoff@v0.1.1/assets/demo.mp4"><b>▶ Watch the 1-minute demo</b></a>: installing the plugin, setting it up, and Claude creating a GitHub token it never sees.
 </div>
 
 <br>
