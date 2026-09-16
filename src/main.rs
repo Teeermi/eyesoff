@@ -3,6 +3,7 @@ mod proxy;
 mod redact;
 mod secrets;
 mod settings;
+mod supervisor;
 
 use std::path::PathBuf;
 use std::process::ExitCode;

@@ -23,7 +23,7 @@ pub fn add_to_claude_settings() -> Result<()> {
     let changed = add_eyesoff(&mut settings).with_context(|| format!("left {} as is", path.display()))?;
 
     if !proxy_listening() {
-        start_proxy()?;
+        ensure_running()?;
         if !(0..20).any(|_| {
             sleep(Duration::from_millis(250));
             proxy_listening()
@@ -31,6 +31,8 @@ pub fn add_to_claude_settings() -> Result<()> {
             bail!("the proxy didn't start, so {} was left as is. See {}", path.display(), log_path().display());
         }
         println!("Started the eyesoff proxy on {BASE_URL}");
+    } else {
+        let _ = crate::supervisor::install(&std::env::current_exe()?);
     }
 
     if changed {
@@ -56,6 +58,7 @@ pub fn remove_from_claude_settings() -> Result<()> {
         Err(e) => return Err(e).with_context(|| format!("could not read {}", path.display())),
     };
     let mut settings: Value = serde_json::from_str(&text).with_context(|| format!("could not parse {}", path.display()))?;
+    crate::supervisor::uninstall();
     if remove_eyesoff(&mut settings) {
         fs::write(&path, serde_json::to_string_pretty(&settings)? + "\n").with_context(|| format!("could not write {}", path.display()))?;
         println!("Removed eyesoff from {}", path.display());
@@ -77,8 +80,19 @@ fn proxy_listening() -> bool {
     TcpStream::connect_timeout(&(Ipv4Addr::LOCALHOST, PORT).into(), Duration::from_secs(1)).is_ok()
 }
 
-fn log_path() -> PathBuf {
+pub(crate) fn log_path() -> PathBuf {
     std::env::temp_dir().join("eyesoff.log")
+}
+
+fn ensure_running() -> Result<()> {
+    match crate::supervisor::install(&std::env::current_exe()?) {
+        Ok(true) => Ok(()),
+        Ok(false) => start_proxy(),
+        Err(e) => {
+            eprintln!("eyesoff: could not set up automatic restart ({e:#}), starting a plain background process instead");
+            start_proxy()
+        }
+    }
 }
 
 fn start_proxy() -> Result<()> {
