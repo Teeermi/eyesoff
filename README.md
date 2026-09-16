@@ -1,42 +1,163 @@
+<div align="center">
+
+<img src="assets/logo.svg" alt="eyesoff logo" width="120" />
+
 # eyesoff
 
-Let your coding agent set up API keys without ever seeing them.
+**Let your coding agent set up API keys without ever seeing them.**
 
-Setting up env vars is boring, so you ask Claude Code to do it: open the Stripe dashboard, create a key, put it in `.env`. It can do that. The catch is that the key shows up in a screenshot, or in page text, or in `cat .env`, and all of that gets sent to the model.
+<br>
 
-eyesoff is a small local proxy between Claude Code and the Anthropic API. It strips secrets out of everything that leaves your machine. Text goes through pattern matching. Screenshots go through the OCR built into macOS, and anything that looks like a key gets a black box drawn over it. The key itself travels through your clipboard and never becomes part of the conversation.
+![Version](https://img.shields.io/github/v/release/Teeermi/eyesoff?style=flat&label=version&color=gray)
+![Platform](https://img.shields.io/badge/macOS_|_Linux_|_Windows-gray?style=flat)
+![License](https://img.shields.io/badge/MIT-gray?style=flat&label=license)
+[![CI](https://img.shields.io/github/actions/workflow/status/Teeermi/eyesoff/ci.yml?branch=main&style=flat&label=CI&color=gray)](https://github.com/Teeermi/eyesoff/actions/workflows/ci.yml)
 
-![Claude Code sends text and screenshots to eyesoff on 127.0.0.1:8787, which strips secrets before forwarding to api.anthropic.com. Responses pass back untouched.](assets/diagram.svg)
+</div>
 
-## What a run looks like
+<br>
 
-1. You: "create a restricted Stripe key and add it to .env as STRIPE_SECRET_KEY".
-2. The agent opens the dashboard and creates the key. The screenshot it takes has the key covered before it leaves your Mac.
-3. The agent clicks Copy. The key is now in your clipboard, and the model has no view of that.
-4. The agent runs `eyesoff paste STRIPE_SECRET_KEY --env .env`. eyesoff writes the clipboard into the file, clears the clipboard and prints `STRIPE_SECRET_KEY saved to .env (107 chars), clipboard cleared`. That line is all the model gets back.
-5. If the agent reads `.env` later, it sees `STRIPE_SECRET_KEY=[hidden by eyesoff]`.
+<table align="center">
+<tr>
+<td align="center" width="50%">
+  <img src="assets/before.jpg" alt="A dashboard screenshot with a Stripe secret key and an API token in plain view" />
+  <br>
+  <strong>What Claude Code captures</strong>
+</td>
+<td align="center" width="50%">
+  <img src="assets/after.jpg" alt="The same screenshot with both secrets covered by black boxes" />
+  <br>
+  <strong>What the model receives</strong>
+</td>
+</tr>
+</table>
 
-## Install
+<p align="center">
+A small local proxy between Claude Code and the Anthropic API.<br>
+It strips secrets out of text and screenshots before anything leaves your machine.
+</p>
 
-eyesoff is a single binary written in Rust, tested in CI on macOS, Linux and Windows.
+<br>
 
-```sh
-brew tap Teeermi/eyesoff https://github.com/Teeermi/eyesoff && brew install eyesoff   # macOS
-cargo install --git https://github.com/Teeermi/eyesoff                                # Linux, Windows, or macOS without brew
-```
+<div align="center">
 
-## Set up Claude Code
+## Quick start
 
-The [`eyesoff` plugin](https://github.com/Teeermi/eyesoff/tree/main/skills/eyesoff-setup) can do the steps below for you and warns you mid-session if the proxy stops running:
+</div>
+
+Install the plugin in Claude Code:
 
 ```
 /plugin marketplace add Teeermi/eyesoff
 /plugin install eyesoff@eyesoff
 ```
 
-Then ask Claude Code to set up eyesoff. It can't flip `ANTHROPIC_BASE_URL` for the session that installs it, though — that's fixed at startup, so either way you restart Claude Code once after this is in place.
+Then tell Claude:
 
-Or do it by hand. Start the proxy and leave it running:
+```
+set up eyesoff
+```
+
+Claude downloads the eyesoff binary, starts the proxy and points Claude Code at it in `~/.claude/settings.json`. Restart Claude Code and you're done. From then on the plugin starts the proxy when a session begins, in case it isn't running, and gives Claude the rules for handling keys.
+
+<br>
+
+---
+
+<br>
+
+<div align="center">
+
+## Features
+
+</div>
+
+<table align="center">
+<tr>
+<td width="50%" valign="top">
+
+### Text
+- **57 known key formats** from Stripe, GitHub, OpenAI, AWS and more, listed in [`prefixes.txt`](prefixes.txt)
+- **Long random strings** with digits and mixed case, even without a known prefix
+- **`cat .env`** comes back as `STRIPE_SECRET_KEY=[hidden by eyesoff]`
+
+### Screenshots
+- **On-device OCR** with the macOS Vision framework
+- **Black boxes** over anything that looks like a key, including keys wrapped over two lines
+- **Fails closed**: a screenshot that can't be checked is replaced with a note
+
+</td>
+<td width="50%" valign="top">
+
+### Keys never enter the chat
+- **`eyesoff paste NAME --env .env`** writes the clipboard into a file and clears the clipboard
+- **`eyesoff paste NAME -- command`** pipes the clipboard into a command's stdin
+- The model only sees `STRIPE_SECRET_KEY saved to .env (107 chars), clipboard cleared`
+
+### Small and strict
+- **One Rust binary**, tested in CI on macOS, Linux and Windows
+- **No API key needed**, works with a claude.ai subscription login
+- **Nothing goes out unchecked**: if eyesoff isn't running, Claude Code can't reach the API
+
+</td>
+</tr>
+</table>
+
+<br>
+
+---
+
+<br>
+
+<div align="center">
+
+## How it works
+
+<br>
+
+<img src="assets/diagram.svg" alt="Claude Code sends text and screenshots to eyesoff on 127.0.0.1:8787, which strips secrets before forwarding to api.anthropic.com. Responses pass back untouched." width="720" />
+
+</div>
+
+<br>
+
+1. You: "create a restricted Stripe key and add it to .env as STRIPE_SECRET_KEY".
+2. The agent opens the dashboard and creates the key. The screenshot it takes has the key covered before it leaves your machine.
+3. The agent clicks Copy. The key is now in your clipboard, and the model has no view of that.
+4. The agent runs `eyesoff paste STRIPE_SECRET_KEY --env .env`. eyesoff writes the clipboard into the file, clears the clipboard and prints `STRIPE_SECRET_KEY saved to .env (107 chars), clipboard cleared`. That line is all the model gets back.
+5. If the agent reads `.env` later, it sees `STRIPE_SECRET_KEY=[hidden by eyesoff]`.
+
+<br>
+
+---
+
+<br>
+
+<div align="center">
+
+## Install without the plugin
+
+</div>
+
+**macOS and Linux**
+
+```sh
+curl -fsSL https://raw.githubusercontent.com/Teeermi/eyesoff/main/install.sh | sh
+```
+
+**Windows** (PowerShell)
+
+```powershell
+irm https://raw.githubusercontent.com/Teeermi/eyesoff/main/install.ps1 | iex
+```
+
+**From source**
+
+```sh
+cargo install --git https://github.com/Teeermi/eyesoff
+```
+
+Start the proxy and leave it running:
 
 ```sh
 eyesoff start
@@ -55,20 +176,26 @@ Point Claude Code at it in `~/.claude/settings.json`:
 }
 ```
 
-When eyesoff isn't running, Claude Code can't reach the API at all. That's on purpose: nothing goes out unchecked. Works with a claude.ai subscription login.
-
-Then tell the agent how to handle keys, for example in `~/.claude/CLAUDE.md`:
+Tell the agent how to handle keys, for example in `~/.claude/CLAUDE.md`:
 
 ```
-Never print or read secret values, and never run pbpaste.
+Never print or read secret values, and never read the clipboard.
 To store a key from a web dashboard, click its Copy button and run
 `eyesoff paste NAME --env .env`. To send it to a command that reads stdin,
 run `eyesoff paste NAME -- <command>`, e.g. `eyesoff paste API_TOKEN -- wrangler secret put API_TOKEN`.
 ```
 
-Drive the browser from Claude Code (the Claude in Chrome integration), not from the Chrome side panel. The side panel talks to Anthropic on its own and never goes through eyesoff.
+<br>
+
+---
+
+<br>
+
+<div align="center">
 
 ## Commands
+
+</div>
 
 `eyesoff start [--port 8787]` runs the proxy. Each request gets one log line, with a note when something was hidden:
 
@@ -80,23 +207,77 @@ POST /v1/messages?beta=true 200  hid 2 strings, 1 screenshot
 
 `eyesoff paste NAME -- command [args]` pipes the clipboard into the command's stdin. If the command fails, the clipboard is kept so you can try again.
 
-## Limits
+<br>
 
-Be clear about what this is. It keeps secrets from leaking by accident. It is not a sandbox.
+---
+
+<br>
+
+<div align="center">
+
+## FAQ
+
+</div>
+
+<details>
+<summary><b>What doesn't eyesoff protect against?</b></summary>
+<br>
+
+It keeps secrets from leaking by accident. It is not a sandbox.
 
 - Detection is a heuristic. It catches the known prefixes in [`prefixes.txt`](prefixes.txt) and strings of 20+ characters with digits and mixed case. A short token with no known prefix will get through.
 - It also hides things that aren't secrets, like some hashes and base64. The agent sees `[hidden by eyesoff]` and usually works around it.
 - OCR can miss text that is tiny, rotated or broken up in odd ways.
 - An agent that really wants a key can still get it out, for example by encoding it first. eyesoff won't stop that.
-- If a screenshot can't be checked, it's replaced with a note instead of being sent.
 - Clipboard managers keep history. Exclude your browser in yours, or delete the entry.
 - Claude Code's local transcripts in `~/.claude` still contain the original screenshots and output. Only what goes to the API is cleaned.
-- Screenshots are only checked on macOS for now. On Linux and Windows the proxy runs fine (CI covers both), but every screenshot is removed instead of checked.
 
-## Contributing
+</details>
 
-Missing a provider? Adding one is a single line in [`prefixes.txt`](prefixes.txt). See [CONTRIBUTING.md](CONTRIBUTING.md).
+<details>
+<summary><b>Are screenshots checked on Linux and Windows?</b></summary>
+<br>
+Not yet. OCR uses the macOS Vision framework, so on Linux and Windows every screenshot is removed from the request instead of checked. Text filtering works the same everywhere.
+</details>
 
-## License
+<details>
+<summary><b>Why can't Claude Code reach the API when eyesoff is off?</b></summary>
+<br>
+That's on purpose: nothing goes out unchecked. With the plugin installed, eyesoff is started for you when a session begins. Without it, run <code>eyesoff start</code> first.
+</details>
 
-MIT
+<details>
+<summary><b>Can I use the Chrome side panel?</b></summary>
+<br>
+No. Drive the browser from Claude Code (the Claude in Chrome integration). The side panel talks to Anthropic on its own and never goes through eyesoff.
+</details>
+
+<details>
+<summary><b>How do I uninstall it?</b></summary>
+<br>
+Remove <code>ANTHROPIC_BASE_URL</code> from <code>~/.claude/settings.json</code> first, otherwise Claude Code can't reach the API once eyesoff is gone. Then run <code>/plugin uninstall eyesoff@eyesoff</code> and delete the binary: <code>~/.local/bin/eyesoff</code> on macOS and Linux, <code>%LOCALAPPDATA%\Programs\eyesoff</code> on Windows.
+</details>
+
+<details>
+<summary><b>My provider's keys aren't hidden. How do I add them?</b></summary>
+<br>
+Adding a provider is a single line in <a href="prefixes.txt"><code>prefixes.txt</code></a>. See <a href="CONTRIBUTING.md">CONTRIBUTING.md</a>.
+</details>
+
+<br>
+
+---
+
+<br>
+
+<div align="center">
+
+[![Contributing](https://img.shields.io/badge/Contributing-guide-gray?style=flat)](CONTRIBUTING.md)
+[![Issues](https://img.shields.io/badge/Report-Issues-orange?style=flat&logo=github)](https://github.com/Teeermi/eyesoff/issues)
+[![License](https://img.shields.io/badge/License-MIT-gray?style=flat)](LICENSE)
+
+<br>
+
+Developed by [Teeermi](https://github.com/Teeermi)
+
+</div>
