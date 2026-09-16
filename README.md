@@ -145,6 +145,12 @@ Claude downloads the eyesoff binary, starts the proxy and points Claude Code at 
 curl -fsSL https://raw.githubusercontent.com/Teeermi/eyesoff/main/install.sh | sh
 ```
 
+**Debian and Ubuntu**
+
+```sh
+curl -fsSLo /tmp/eyesoff.deb https://github.com/Teeermi/eyesoff/releases/latest/download/eyesoff_$(dpkg --print-architecture).deb && sudo apt install /tmp/eyesoff.deb
+```
+
 **Windows** (PowerShell)
 
 ```powershell
@@ -255,7 +261,7 @@ No. Drive the browser from Claude Code (the Claude in Chrome integration). The s
 <details>
 <summary><b>How do I uninstall it?</b></summary>
 <br>
-Remove <code>ANTHROPIC_BASE_URL</code> from <code>~/.claude/settings.json</code> first, otherwise Claude Code can't reach the API once eyesoff is gone. Then run <code>/plugin uninstall eyesoff@eyesoff</code> and delete the binary: <code>~/.local/bin/eyesoff</code> on macOS and Linux, <code>%LOCALAPPDATA%\Programs\eyesoff</code> on Windows.
+Remove <code>ANTHROPIC_BASE_URL</code> from <code>~/.claude/settings.json</code> first, otherwise Claude Code can't reach the API once eyesoff is gone. Then run <code>/plugin uninstall eyesoff@eyesoff</code> and delete the binary: <code>~/.local/bin/eyesoff</code> on macOS and Linux, <code>%LOCALAPPDATA%\Programs\eyesoff</code> on Windows, or <code>sudo apt remove eyesoff</code> if you installed the .deb.
 </details>
 
 <details>

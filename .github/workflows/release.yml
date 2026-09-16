@@ -41,3 +41,22 @@ jobs:
           gh release upload "$GITHUB_REF_NAME" "eyesoff-${{ matrix.target }}${{ matrix.ext }}" --clobber
         env:
           GH_TOKEN: ${{ github.token }}
+      - if: runner.os == 'Linux'
+        run: |
+          arch=$(dpkg --print-architecture)
+          mkdir -p deb/DEBIAN deb/usr/bin
+          cp "target/${{ matrix.target }}/release/eyesoff" deb/usr/bin/
+          cat > deb/DEBIAN/control <<EOF
+          Package: eyesoff
+          Version: ${GITHUB_REF_NAME#v}
+          Architecture: $arch
+          Maintainer: Termi <173885477+Teeermi@users.noreply.github.com>
+          Homepage: https://github.com/Teeermi/eyesoff
+          Section: utils
+          Priority: optional
+          Description: Keeps secrets out of what your coding agent sends to the model
+          EOF
+          dpkg-deb --build --root-owner-group deb "eyesoff_$arch.deb"
+          gh release upload "$GITHUB_REF_NAME" "eyesoff_$arch.deb" --clobber
+        env:
+          GH_TOKEN: ${{ github.token }}
