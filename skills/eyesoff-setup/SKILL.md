@@ -37,6 +37,11 @@ Claude Code can't reach the API at all.
      "permissions": { "deny": ["Bash(pbpaste *)"] }
    }
    ```
+   Auto mode may deny this edit because it changes where Claude Code sends
+   requests. If it does, don't retry and don't print the user's existing
+   settings. Tell them the change needs their approval: switch out of auto mode
+   with Shift+Tab and say "set up eyesoff" again, or add the two keys above
+   themselves.
 4. Tell the user eyesoff is set up and takes effect once they restart Claude
    Code, because the API address is read at startup. From then on the plugin
    starts the proxy at the beginning of every session if it isn't running and

@@ -9,7 +9,7 @@
   "plugins": [
     {
       "name": "eyesoff",
-      "description": "Walks through eyesoff setup and warns mid-session if secrets aren't actually being filtered.",
+      "description": "Installs eyesoff, points Claude Code at it and keeps the proxy running, so secrets are hidden before they reach the model.",
       "source": "./",
       "category": "security"
     }

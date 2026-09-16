@@ -19,7 +19,8 @@ chmod +x "$dir/eyesoff.tmp"
 mv "$dir/eyesoff.tmp" "$dir/eyesoff"
 
 echo "eyesoff installed to $dir/eyesoff"
-case "${SHELL##*/}" in
+shell="${SHELL:-sh}"
+case "${shell##*/}" in
   zsh) rc="$HOME/.zshrc" ;;
   bash) rc="$HOME/.bashrc" ;;
   *) rc="$HOME/.profile" ;;

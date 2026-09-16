@@ -1,7 +1,7 @@
 {
   "name": "eyesoff",
   "version": "0.1.0",
-  "description": "Keep secrets out of what Claude Code sends to the model. Walks through setup and warns during a session if the eyesoff proxy isn't actually filtering.",
+  "description": "Keep secrets out of what Claude Code sends to the model. Installs eyesoff, points Claude Code at it, starts the proxy each session and tells Claude how to handle keys.",
   "author": {
     "name": "Termi",
     "url": "https://github.com/Teeermi"
@@ -9,5 +9,10 @@
   "homepage": "https://github.com/Teeermi/eyesoff",
   "repository": "https://github.com/Teeermi/eyesoff",
   "license": "MIT",
-  "keywords": ["security", "secrets", "proxy", "api-keys"]
+  "keywords": [
+    "security",
+    "secrets",
+    "proxy",
+    "api-keys"
+  ]
 }
