@@ -19,7 +19,7 @@ Never paste a real key into an issue or a PR, not even a revoked one.
 A few things to know before you add a prefix:
 
 - It only counts when at least 16 more characters follow it and at least one of them is a digit. That's what keeps names like `npm_config_registry` from getting hidden.
-- Long random strings are hidden even without a prefix, so a format without a fixed prefix usually doesn't need an entry. If you have one that slips through anyway, open an issue.
+- Long random strings are hidden even without a prefix, as is any run of 32 or more hex characters except a 40-character git SHA, so a format without a fixed prefix usually doesn't need an entry. If you have one that slips through anyway, open an issue.
 - Prefixes with a `.` in them, like SendGrid's `SG.`, can't be matched yet.
 
 ## Reporting a false positive

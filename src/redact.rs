@@ -14,6 +14,7 @@ pub const HIDDEN: &str = "[hidden by eyesoff]";
 pub const SCREENSHOT_REMOVED: &str = "[screenshot removed by eyesoff: it could not be checked for secrets]";
 pub const SCREENSHOT_UNREADABLE: &str = "[screenshot removed by eyesoff: its text is too small to check for secrets. Take it again at full size, or zoom in on the part you need]";
 
+const GIT_SHA: usize = 40;
 const SAFE_PREFIXES: &[&str] = &["toolu_", "srvtoolu_", "msg_", "req_"];
 const TEXT_KEYS: &[&str] = &["text", "content", "system"];
 
@@ -48,6 +49,9 @@ pub fn looks_like_secret(word: &str) -> bool {
     }
     if let Some(rest) = PREFIXES.iter().find_map(|p| word.strip_prefix(p)) {
         return rest.chars().count() >= 16 && rest.chars().any(|c| c.is_numeric());
+    }
+    if word.len() >= 32 && word.len() != GIT_SHA && word.bytes().all(|b| b.is_ascii_hexdigit()) {
+        return true;
     }
     word.chars().count() >= 20
         && word.chars().filter(|c| c.is_numeric()).count() >= 3
@@ -130,6 +134,8 @@ mod tests {
 
     pub const FAKE_STRIPE: &str = concat!("sk_", "live_", "51HxQ7vK2mNp8RtL4wYzQ7vK2mNp8RtL4wYzQ7vK2mNp8RtL4wYz");
     pub const FAKE_TOKEN: &str = concat!("i7r1BcTs", "z8eOrG40lxLF1fdL", "fgVp04VVy9VExL7C");
+    const FAKE_HEX_ID: &str = concat!("0123456789abcdef", "fedcba9876543210");
+    const FAKE_HEX_SECRET: &str = concat!("00112233445566778899aabbccddeeff", "ffeeddccbbaa99887766554433221100");
 
     fn hide(text: &str) -> (String, usize) {
         let mut stats = Stats::default();
@@ -139,7 +145,14 @@ mod tests {
 
     #[test]
     fn hides_secrets_in_text() {
-        for secret in [FAKE_STRIPE, FAKE_TOKEN, concat!("ghp_", "a1B2c3D4e5F6g7H8i9J0"), concat!("AKIA", "IOSFODNN7EXAMPLE1")] {
+        for secret in [
+            FAKE_STRIPE,
+            FAKE_TOKEN,
+            FAKE_HEX_ID,
+            FAKE_HEX_SECRET,
+            concat!("ghp_", "a1B2c3D4e5F6g7H8i9J0"),
+            concat!("AKIA", "IOSFODNN7EXAMPLE1"),
+        ] {
             let (out, count) = hide(&format!("STRIPE_SECRET_KEY={secret}\n"));
             assert_eq!(out, format!("STRIPE_SECRET_KEY={HIDDEN}\n"), "{secret}");
             assert_eq!(count, 1);

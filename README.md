@@ -71,7 +71,7 @@ Claude downloads the eyesoff binary, starts the proxy and points Claude Code at 
 
 ### Text
 - Catches 57 known key formats from Stripe, GitHub, OpenAI, AWS and others, listed in [`prefixes.txt`](prefixes.txt)
-- Also catches long random strings with digits and mixed case that have no known prefix
+- Also catches long random strings with digits and mixed case, and hex strings of 32 characters or more, like the access key and secret an R2 or S3 token gives you. A 40-character git SHA stays readable
 - `cat .env` comes back as `STRIPE_SECRET_KEY=[hidden by eyesoff]`
 
 ### Screenshots
