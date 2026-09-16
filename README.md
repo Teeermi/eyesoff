@@ -21,7 +21,7 @@
   <img src="assets/demo.gif" alt="Claude Code sees your API keys: cat .env prints a Stripe key, a black bar covers it and it turns into [hidden by eyesoff]." width="900" />
   <br>
   <br>
-  <a href="assets/demo.mp4"><b>▶ Watch the 1-minute demo</b></a>: installing the plugin, setting it up, and Claude creating a GitHub token it never sees.
+  <a href="https://github.com/Teeermi/eyesoff/raw/main/assets/demo.mp4"><b>▶ Download the 1-minute demo</b></a> (MP4, 6 MB): installing the plugin, setting it up, and Claude creating a GitHub token it never sees.
 </div>
 
 <br>
