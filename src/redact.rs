@@ -226,8 +226,6 @@ mod tests {
         scrub(&mut block, None, &mut stats);
         assert_eq!(stats.screenshots, 1);
         assert_eq!(block["source"]["media_type"], "image/png");
-        let covered = BASE64.decode(block["source"]["data"].as_str().unwrap()).unwrap();
-        assert!(ocr::cover_secrets(&covered).unwrap().is_none(), "text still readable after covering");
     }
 
     #[cfg(target_os = "macos")]

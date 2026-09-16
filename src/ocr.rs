@@ -179,6 +179,13 @@ mod tests {
         assert_eq!(secret_boxes(&lines), vec![first, second]);
     }
 
+    #[cfg(target_os = "macos")]
+    #[test]
+    fn no_key_is_readable_after_covering() {
+        let covered = cover_secrets(include_bytes!("../testdata/dashboard.jpg")).unwrap().unwrap();
+        assert!(secret_boxes(&platform::recognize(&covered).unwrap()).is_empty(), "a key is still readable after covering");
+    }
+
     #[test]
     fn refuses_screenshots_with_too_much_unreadable_text() {
         let line = |confidence| Line { bounds: Rect { x: 0.1, y: 0.1, width: 0.5, height: 0.02 }, words: vec![], confidence };
