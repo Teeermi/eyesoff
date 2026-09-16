@@ -1,0 +1,17 @@
+{
+  "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
+  "name": "eyesoff",
+  "description": "Keep secrets out of what your coding agent sends to the model.",
+  "owner": {
+    "name": "Termi",
+    "url": "https://github.com/Teeermi"
+  },
+  "plugins": [
+    {
+      "name": "eyesoff",
+      "description": "Walks through eyesoff setup and warns mid-session if secrets aren't actually being filtered.",
+      "source": "./",
+      "category": "security"
+    }
+  ]
+}
