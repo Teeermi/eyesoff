@@ -22,21 +22,13 @@ Claude Code  ──►  eyesoff (127.0.0.1:8787)  ──►  api.anthropic.com
 4. The agent runs `eyesoff paste STRIPE_SECRET_KEY --env .env`. eyesoff writes the clipboard into the file, clears the clipboard and prints `STRIPE_SECRET_KEY saved to .env (107 chars), clipboard cleared`. That line is all the model gets back.
 5. If the agent reads `.env` later, it sees `STRIPE_SECRET_KEY=[hidden by eyesoff]`.
 
-## Requirements
-
-- macOS
-- Xcode Command Line Tools (`xcode-select --install`), for `swiftc`
-- Python 3.9 or newer, the one from Command Line Tools is fine
-
 ## Install
 
-```sh
-git clone https://github.com/Teeermi/eyesoff.git
-cd eyesoff
-make install
-```
+eyesoff is a single binary written in Rust. Until prebuilt releases are out, build it with cargo:
 
-This builds the OCR helper and links `eyesoff` into `~/.local/bin`.
+```sh
+cargo install --git https://github.com/Teeermi/eyesoff
+```
 
 ## Set up Claude Code
 
@@ -77,7 +69,7 @@ Drive the browser from Claude Code (the Claude in Chrome integration), not from 
 `eyesoff start [--port 8787]` runs the proxy. Each request gets one log line, with a note when something was hidden:
 
 ```
-14:02:05 POST /v1/messages?beta=true 200  hid 2 strings, 1 screenshot
+POST /v1/messages?beta=true 200  hid 2 strings, 1 screenshot
 ```
 
 `eyesoff paste NAME --env FILE` puts the clipboard into `FILE` as `NAME=value`. An existing `NAME=` line is replaced, anything else is left alone. New files are created with mode 600.
@@ -95,12 +87,12 @@ Be clear about what this is. It keeps secrets from leaking by accident. It is no
 - If a screenshot can't be checked, it's replaced with a note instead of being sent.
 - Clipboard managers keep history. Exclude your browser in yours, or delete the entry.
 - Claude Code's local transcripts in `~/.claude` still contain the original screenshots and output. Only what goes to the API is cleaned.
-- macOS only for now.
+- Screenshots are only checked on macOS for now. On Linux and Windows the proxy still runs, but every screenshot is removed instead of checked.
 
 ## Tests
 
 ```sh
-make test
+cargo test
 ```
 
 ## License

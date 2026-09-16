@@ -1,0 +1,29 @@
+[package]
+name = "eyesoff"
+version = "0.1.0"
+edition = "2024"
+description = "Keeps secrets out of what your coding agent sends to the model"
+license = "MIT"
+repository = "https://github.com/Teeermi/eyesoff"
+
+[dependencies]
+anyhow = "1"
+arboard = "3"
+axum = "0.8"
+base64 = "0.22"
+clap = { version = "4", features = ["derive"] }
+image = { version = "0.25", default-features = false, features = ["png", "jpeg", "gif", "webp"] }
+regex = "1"
+reqwest = { version = "0.13", features = ["stream"] }
+serde_json = { version = "1", features = ["preserve_order"] }
+tokio = { version = "1", features = ["rt-multi-thread", "net"] }
+
+[target.'cfg(target_os = "macos")'.dependencies]
+objc2 = "0.6"
+objc2-core-foundation = "0.3"
+objc2-foundation = "0.3"
+objc2-vision = "0.3"
+
+[profile.release]
+lto = true
+strip = true
