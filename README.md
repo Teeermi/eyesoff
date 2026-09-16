@@ -21,8 +21,8 @@ eyesoff is a small local proxy between Claude Code and the Anthropic API. It str
 eyesoff is a single binary written in Rust, tested in CI on macOS, Linux and Windows.
 
 ```sh
-brew install Teeermi/eyesoff/eyesoff        # macOS
-cargo install --git https://github.com/Teeermi/eyesoff   # anywhere
+brew tap Teeermi/eyesoff https://github.com/Teeermi/eyesoff && brew install eyesoff   # macOS
+cargo install --git https://github.com/Teeermi/eyesoff                                # anywhere
 ```
 
 ## Set up Claude Code
