@@ -6,13 +6,7 @@ Setting up env vars is boring, so you ask Claude Code to do it: open the Stripe 
 
 eyesoff is a small local proxy between Claude Code and the Anthropic API. It strips secrets out of everything that leaves your machine. Text goes through pattern matching. Screenshots go through the OCR built into macOS, and anything that looks like a key gets a black box drawn over it. The key itself travels through your clipboard and never becomes part of the conversation.
 
-```
-Claude Code  ──►  eyesoff (127.0.0.1:8787)  ──►  api.anthropic.com
-
-                  text         secret-looking strings become [hidden by eyesoff]
-                  screenshots  keys are found with macOS Vision and covered
-                  responses    passed through untouched
-```
+![Claude Code sends text and screenshots to eyesoff on 127.0.0.1:8787, which strips secrets before forwarding to api.anthropic.com. Responses pass back untouched.](assets/diagram.svg)
 
 ## What a run looks like
 
