@@ -44,13 +44,21 @@ impl Stats {
 }
 
 pub fn looks_like_secret(word: &str) -> bool {
+    secret_like(word, 32, true)
+}
+
+pub fn looks_like_secret_in_image(word: &str) -> bool {
+    secret_like(word, 16, false)
+}
+
+fn secret_like(word: &str, hex_min: usize, keep_git_sha: bool) -> bool {
     if word.contains("://") || word.contains("...") || SAFE_PREFIXES.iter().any(|p| word.starts_with(p)) {
         return false;
     }
     if let Some(rest) = PREFIXES.iter().find_map(|p| word.strip_prefix(p)) {
         return rest.chars().count() >= 16 && rest.chars().any(|c| c.is_numeric());
     }
-    if word.len() >= 32 && word.len() != GIT_SHA && word.bytes().all(|b| b.is_ascii_hexdigit()) {
+    if word.len() >= hex_min && !(keep_git_sha && word.len() == GIT_SHA) && word.bytes().all(|b| b.is_ascii_hexdigit()) {
         return true;
     }
     word.chars().count() >= 20

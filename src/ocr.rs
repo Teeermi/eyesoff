@@ -3,7 +3,7 @@ use std::io::Cursor;
 use anyhow::Result;
 use image::{ImageFormat, Rgba};
 
-use crate::redact::looks_like_secret;
+use crate::redact::looks_like_secret_in_image;
 
 #[derive(Clone, Copy, Debug, PartialEq)]
 pub struct Rect {
@@ -77,7 +77,7 @@ fn secret_boxes(lines: &[Line]) -> Vec<Rect> {
     let mut boxes = Vec::new();
     let mut hit_lines = Vec::new();
     for line in lines {
-        for word in line.words.iter().filter(|w| looks_like_secret(&w.text)) {
+        for word in line.words.iter().filter(|w| looks_like_secret_in_image(&w.text)) {
             boxes.push(word.bounds);
             hit_lines.push(line.bounds);
         }
