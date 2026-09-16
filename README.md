@@ -18,13 +18,16 @@ eyesoff is a small local proxy between Claude Code and the Anthropic API. It str
 
 ## Install
 
-eyesoff is a single binary written in Rust. Until prebuilt releases are out, build it with cargo:
+eyesoff is a single binary written in Rust, tested in CI on macOS, Linux and Windows.
 
 ```sh
-cargo install --git https://github.com/Teeermi/eyesoff
+brew install Teeermi/eyesoff/eyesoff        # macOS
+cargo install --git https://github.com/Teeermi/eyesoff   # anywhere
 ```
 
 ## Set up Claude Code
+
+The [`eyesoff` plugin](https://github.com/Teeermi/eyesoff/tree/main/skills/eyesoff-setup) can do the steps below for you (`/plugin marketplace add Teeermi/eyesoff`, then `/plugin install eyesoff@eyesoff`, then ask it to set up eyesoff) and warns you mid-session if the proxy stops running. It can't flip `ANTHROPIC_BASE_URL` for the session that installs it, though — that's fixed at startup, so either way you restart Claude Code once after this is in place.
 
 Start the proxy and leave it running:
 
@@ -81,7 +84,7 @@ Be clear about what this is. It keeps secrets from leaking by accident. It is no
 - If a screenshot can't be checked, it's replaced with a note instead of being sent.
 - Clipboard managers keep history. Exclude your browser in yours, or delete the entry.
 - Claude Code's local transcripts in `~/.claude` still contain the original screenshots and output. Only what goes to the API is cleaned.
-- Screenshots are only checked on macOS for now. On Linux and Windows the proxy still runs, but every screenshot is removed instead of checked.
+- Screenshots are only checked on macOS for now. On Linux and Windows the proxy runs fine (CI covers both), but every screenshot is removed instead of checked.
 
 ## Contributing
 
