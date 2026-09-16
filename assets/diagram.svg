@@ -1,38 +1,70 @@
-<svg viewBox="0 0 720 230" xmlns="http://www.w3.org/2000/svg" role="img"
-     aria-label="Claude Code sends text and screenshots to eyesoff on 127.0.0.1:8787, which strips secrets before forwarding to api.anthropic.com; responses pass back untouched.">
-  <title>eyesoff request flow</title>
+<svg viewBox="0 0 1200 580" xmlns="http://www.w3.org/2000/svg" role="img"
+     aria-label="Claude Code sends each request to eyesoff on 127.0.0.1:8787. eyesoff removes keys from the text and covers them in screenshots, then forwards the request to api.anthropic.com. Responses come back unchanged.">
+  <title>How eyesoff sits between Claude Code and the Anthropic API</title>
   <defs>
-    <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
-      <path d="M0,0 L10,5 L0,10 z" fill="#57606a"/>
+    <marker id="head" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#f4f4f5"/>
+    </marker>
+    <marker id="head-dim" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#6b6b71"/>
     </marker>
   </defs>
 
-  <rect x="0.5" y="0.5" width="719" height="229" rx="14" fill="#f6f8fa" stroke="#d0d7de"/>
+  <rect x="0.5" y="0.5" width="1199" height="579" rx="22" fill="#0b0b0c" stroke="#2a2a2e"/>
 
-  <rect x="20" y="45" width="150" height="50" rx="8" fill="#ffffff" stroke="#d0d7de" stroke-width="1.5"/>
-  <text x="95" y="75" text-anchor="middle" font-family="ui-monospace,SFMono-Regular,Menlo,Consolas,monospace" font-size="13" font-weight="600" fill="#1f2328">Claude Code</text>
+  <g font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif">
+    <rect x="50" y="78" width="270" height="150" rx="12" fill="#141416" stroke="#2e2e33"/>
+    <path d="M50 110 V90 a12 12 0 0 1 12 -12 H308 a12 12 0 0 1 12 12 V110 z" fill="#1c1c1f"/>
+    <line x1="50" y1="110" x2="320" y2="110" stroke="#2e2e33"/>
+    <circle cx="70" cy="94" r="5.5" fill="#ff5f57"/>
+    <circle cx="88" cy="94" r="5.5" fill="#febc2e"/>
+    <circle cx="106" cy="94" r="5.5" fill="#28c840"/>
+    <text x="185" y="99" text-anchor="middle" font-size="13" fill="#8e8e93">~/my-app</text>
+    <text x="74" y="178" font-size="24" font-weight="700" fill="#f4f4f5">Claude Code</text>
 
-  <rect x="285" y="30" width="180" height="80" rx="8" fill="#ffffff" stroke="#1f2328" stroke-width="2"/>
-  <text x="375" y="64" text-anchor="middle" font-family="ui-monospace,SFMono-Regular,Menlo,Consolas,monospace" font-size="15" font-weight="700" fill="#1f2328">eyesoff</text>
-  <text x="375" y="84" text-anchor="middle" font-family="ui-monospace,SFMono-Regular,Menlo,Consolas,monospace" font-size="11" fill="#57606a">127.0.0.1:8787</text>
+    <rect x="465" y="58" width="270" height="190" rx="14" fill="#0b0b0c" stroke="#f4f4f5" stroke-width="2"/>
+    <rect x="578" y="80" width="44" height="44" rx="10" fill="#f4f4f5"/>
+    <path d="M586 102 C593 91 607 91 614 102 C607 113 593 113 586 102 Z" fill="#f4f4f5" stroke="#0b0b0c" stroke-width="2.6" stroke-linejoin="round"/>
+    <circle cx="600" cy="102" r="5" fill="#0b0b0c"/>
+    <rect x="583" y="98" width="34" height="8" rx="1.5" fill="#000"/>
+    <rect x="543" y="140" width="114" height="42" rx="7" fill="#f4f4f5"/>
+    <text x="600" y="169" text-anchor="middle" font-size="26" font-weight="800" fill="#0b0b0c">eyesoff</text>
+    <text x="600" y="220" text-anchor="middle" font-size="17" fill="#9a9aa0" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace">127.0.0.1:8787</text>
 
-  <rect x="560" y="45" width="140" height="50" rx="8" fill="#ffffff" stroke="#d0d7de" stroke-width="1.5"/>
-  <text x="630" y="75" text-anchor="middle" font-family="ui-monospace,SFMono-Regular,Menlo,Consolas,monospace" font-size="11" font-weight="600" fill="#1f2328">api.anthropic.com</text>
+    <rect x="880" y="78" width="270" height="150" rx="12" fill="#141416" stroke="#2e2e33"/>
+    <text x="904" y="146" font-size="24" font-weight="700" fill="#f4f4f5">Anthropic API</text>
+    <text x="904" y="180" font-size="16" fill="#9a9aa0" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace">api.anthropic.com</text>
 
-  <line x1="176" y1="70" x2="279" y2="70" stroke="#57606a" stroke-width="1.5" marker-end="url(#arrow)"/>
-  <text x="227" y="20" text-anchor="middle" font-family="ui-monospace,SFMono-Regular,Menlo,Consolas,monospace" font-size="11" fill="#57606a">text + screenshots</text>
+    <line x1="328" y1="150" x2="455" y2="150" stroke="#f4f4f5" stroke-width="2" marker-end="url(#head)"/>
+    <text x="392" y="132" text-anchor="middle" font-size="15" fill="#c9c9cd">text and</text>
+    <text x="392" y="176" text-anchor="middle" font-size="15" fill="#c9c9cd">screenshots</text>
 
-  <line x1="471" y1="70" x2="554" y2="70" stroke="#57606a" stroke-width="1.5" marker-end="url(#arrow)"/>
-  <text x="512" y="20" text-anchor="middle" font-family="ui-monospace,SFMono-Regular,Menlo,Consolas,monospace" font-size="11" fill="#57606a">cleaned request</text>
+    <line x1="745" y1="150" x2="870" y2="150" stroke="#f4f4f5" stroke-width="2" marker-end="url(#head)"/>
+    <text x="808" y="132" text-anchor="middle" font-size="15" fill="#c9c9cd">keys</text>
+    <text x="808" y="176" text-anchor="middle" font-size="15" fill="#c9c9cd">removed</text>
 
-  <g font-family="ui-monospace,SFMono-Regular,Menlo,Consolas,monospace" font-size="12" xml:space="preserve">
-    <rect x="20" y="145" width="7" height="7" fill="#1f2328"/>
-    <text x="34" y="151" fill="#57606a"><tspan font-weight="700" fill="#1f2328">text</tspan><tspan> &#8594; secret-looking strings become </tspan><tspan font-weight="700" fill="#1f2328">[hidden by eyesoff]</tspan></text>
+    <path d="M1015 236 V282 H185 V244" fill="none" stroke="#6b6b71" stroke-width="1.6" stroke-dasharray="6 6" marker-end="url(#head-dim)"/>
+    <rect x="470" y="270" width="260" height="24" fill="#0b0b0c"/>
+    <text x="600" y="288" text-anchor="middle" font-size="15" fill="#8e8e93">responses come back unchanged</text>
 
-    <rect x="20" y="173" width="7" height="7" fill="#1f2328"/>
-    <text x="34" y="179" fill="#57606a"><tspan font-weight="700" fill="#1f2328">screenshots</tspan><tspan> &#8594; keys found with macOS Vision get </tspan><tspan font-weight="700" fill="#1f2328">boxed out</tspan></text>
+    <rect x="50" y="330" width="535" height="200" rx="12" fill="#141416" stroke="#2e2e33"/>
+    <text x="76" y="368" font-size="19" font-weight="700" fill="#f4f4f5">In text</text>
+    <text x="76" y="394" font-size="15" fill="#9a9aa0">Known key formats and long random strings</text>
+    <g font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="16">
+      <text x="76" y="436" font-size="12" letter-spacing="1.2" fill="#6b6b71">WHAT CLAUDE CODE CAPTURES</text>
+      <text x="76" y="460" fill="#9a9aa0">STRIPE_SECRET_KEY=sk_live_••••••••••••</text>
+      <text x="76" y="490" font-size="12" letter-spacing="1.2" fill="#6b6b71">WHAT THE MODEL RECEIVES</text>
+      <text x="76" y="514" fill="#9a9aa0">STRIPE_SECRET_KEY=<tspan fill="#f4f4f5" font-weight="700">[hidden by eyesoff]</tspan></text>
+    </g>
 
-    <rect x="20" y="201" width="7" height="7" fill="#1f2328"/>
-    <text x="34" y="207" fill="#57606a"><tspan font-weight="700" fill="#1f2328">responses</tspan><tspan> &#8594; passed through untouched</tspan></text>
+    <rect x="615" y="330" width="535" height="200" rx="12" fill="#141416" stroke="#2e2e33"/>
+    <text x="641" y="368" font-size="19" font-weight="700" fill="#f4f4f5">In screenshots</text>
+    <text x="641" y="394" font-size="15" fill="#9a9aa0">macOS Vision reads the image, keys get a black box</text>
+    <rect x="641" y="414" width="483" height="94" rx="8" fill="#1b1f24" stroke="#30363d"/>
+    <rect x="659" y="428" width="170" height="9" rx="3" fill="#3a4049"/>
+    <rect x="659" y="446" width="300" height="7" rx="3" fill="#2d333b"/>
+    <rect x="659" y="466" width="447" height="28" rx="5" fill="#1e2a22" stroke="#2f4a36"/>
+    <rect x="669" y="473" width="250" height="14" rx="2" fill="#000"/>
+    <rect x="1054" y="472" width="42" height="16" rx="4" fill="#2d333b"/>
   </g>
 </svg>

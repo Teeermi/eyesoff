@@ -71,27 +71,25 @@ Claude downloads the eyesoff binary, starts the proxy and points Claude Code at 
 <td width="50%" valign="top">
 
 ### Text
-- **57 known key formats** from Stripe, GitHub, OpenAI, AWS and more, listed in [`prefixes.txt`](prefixes.txt)
-- **Long random strings** with digits and mixed case, even without a known prefix
-- **`cat .env`** comes back as `STRIPE_SECRET_KEY=[hidden by eyesoff]`
+- Catches 57 known key formats from Stripe, GitHub, OpenAI, AWS and others, listed in [`prefixes.txt`](prefixes.txt)
+- Also catches long random strings with digits and mixed case that have no known prefix
+- `cat .env` comes back as `STRIPE_SECRET_KEY=[hidden by eyesoff]`
 
 ### Screenshots
-- **On-device OCR** with the macOS Vision framework
-- **Black boxes** over anything that looks like a key, including keys wrapped over two lines
-- **Fails closed**: a screenshot that can't be checked is replaced with a note
+- Reads the image on your Mac with the Vision framework and draws a black box over anything that looks like a key, including a key that wraps onto a second line
+- Replaces a screenshot it can't check with a note instead of sending it
 
 </td>
 <td width="50%" valign="top">
 
-### Keys never enter the chat
-- **`eyesoff paste NAME --env .env`** writes the clipboard into a file and clears the clipboard
-- **`eyesoff paste NAME -- command`** pipes the clipboard into a command's stdin
-- The model only sees `STRIPE_SECRET_KEY saved to .env (107 chars), clipboard cleared`
+### Pasting keys
+- `eyesoff paste NAME --env .env` writes the clipboard into a file and clears the clipboard. The model only sees `STRIPE_SECRET_KEY saved to .env (107 chars), clipboard cleared`
+- `eyesoff paste NAME -- command` pipes the clipboard into a command's stdin
 
-### Small and strict
-- **One Rust binary**, tested in CI on macOS, Linux and Windows
-- **No API key needed**, works with a claude.ai subscription login
-- **Nothing goes out unchecked**: if eyesoff isn't running, Claude Code can't reach the API
+### Setup
+- One Rust binary, tested in CI on macOS, Linux and Windows
+- Works with a claude.ai subscription login, so you don't need an API key
+- If eyesoff isn't running, Claude Code can't reach the API at all
 
 </td>
 </tr>
@@ -130,7 +128,7 @@ Claude downloads the eyesoff binary, starts the proxy and points Claude Code at 
 
 <div align="center">
 
-<img src="assets/diagram.svg" alt="Claude Code sends text and screenshots to eyesoff on 127.0.0.1:8787, which strips secrets before forwarding to api.anthropic.com. Responses pass back untouched." width="720" />
+<img src="assets/diagram.svg" alt="Claude Code sends each request to eyesoff on 127.0.0.1:8787. eyesoff removes keys from the text and covers them in screenshots, then forwards the request to api.anthropic.com. Responses come back unchanged." width="900" />
 
 </div>
 
@@ -244,11 +242,11 @@ POST /v1/messages?beta=true 200  hid 2 strings, 1 screenshot
 <summary><b>What doesn't eyesoff protect against?</b></summary>
 <br>
 
-It keeps secrets from leaking by accident. It is not a sandbox.
+eyesoff is built to catch keys that would otherwise leak by accident, and it has limits:
 
 - Detection is a heuristic. It catches the known prefixes in [`prefixes.txt`](prefixes.txt) and strings of 20+ characters with digits and mixed case. A short token with no known prefix will get through.
 - It also hides things that aren't secrets, like some hashes and base64. The agent sees `[hidden by eyesoff]` and usually works around it.
-- OCR can miss text that is tiny, rotated or broken up in odd ways.
+- OCR can miss text that is tiny, rotated or broken up in odd ways. Scaled-down screenshots, like the ones Claude takes of a narrow browser window, are the most common case.
 - An agent that really wants a key can still get it out, for example by encoding it first. eyesoff won't stop that.
 - Clipboard managers keep history. Exclude your browser in yours, or delete the entry.
 - Claude Code's local transcripts in `~/.claude` still contain the original screenshots and output. Only what goes to the API is cleaned.
@@ -264,7 +262,7 @@ Not yet. OCR uses the macOS Vision framework, so on Linux and Windows every scre
 <details>
 <summary><b>Why can't Claude Code reach the API when eyesoff is off?</b></summary>
 <br>
-That's on purpose: nothing goes out unchecked. With the plugin installed, eyesoff is started for you when a session begins. Without it, run <code>eyesoff start</code> first.
+Claude Code is pointed at eyesoff, so when the proxy is off, requests fail instead of going to Anthropic without being checked. With the plugin installed, eyesoff is started for you when a session begins. Without it, run <code>eyesoff start</code> first.
 </details>
 
 <details>
