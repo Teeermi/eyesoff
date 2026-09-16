@@ -11,7 +11,6 @@
 ![Version](https://img.shields.io/github/v/release/Teeermi/eyesoff?style=flat&label=version&color=gray)
 ![Platform](https://img.shields.io/badge/macOS_|_Linux_|_Windows-gray?style=flat)
 ![License](https://img.shields.io/badge/MIT-gray?style=flat&label=license)
-[![CI](https://img.shields.io/github/actions/workflow/status/Teeermi/eyesoff/ci.yml?branch=main&style=flat&label=CI&color=gray)](https://github.com/Teeermi/eyesoff/actions/workflows/ci.yml)
 
 </div>
 
