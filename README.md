@@ -87,6 +87,7 @@ Claude downloads the eyesoff binary, starts the proxy and points Claude Code at 
 
 ### Setup
 - One Rust binary, tested in CI on macOS, Linux and Windows
+- Updates itself when a new release is out, at the start of a session, before any request goes through. Set `EYESOFF_NO_UPDATE=1` to turn that off
 - Works with a claude.ai subscription login, so you don't need an API key
 - If eyesoff isn't running, Claude Code can't reach the API at all
 

@@ -26,6 +26,27 @@ EOF
   exit 0
 fi
 
+if [ "${EYESOFF_NO_UPDATE:-}" != "1" ]; then
+  running=$(curl -fs --max-time 2 "$url/eyesoff/version" 2>/dev/null)
+  [ -n "$running" ] || running=$(eyesoff --version 2>/dev/null | cut -d' ' -f2)
+  latest=$(curl -fsSL -o /dev/null -w '%{url_effective}' --max-time 3 https://github.com/Teeermi/eyesoff/releases/latest 2>/dev/null)
+  latest=${latest##*/tag/v}
+  case "$latest" in
+    [0-9]*)
+      if [ -n "$running" ] && [ "$running" != "$latest" ]; then
+        if curl -fsSL https://raw.githubusercontent.com/Teeermi/eyesoff/main/install.sh | sh >"${TMPDIR:-/tmp}/eyesoff-update.log" 2>&1; then
+          updated=$latest
+        fi
+      fi
+      ;;
+  esac
+fi
+
+printf '{'
+if [ -n "${updated:-}" ]; then
+  printf '"systemMessage":"eyesoff updated to %s and the proxy restarted.",' "$updated"
+fi
+
 cat <<'EOF'
-{"hookSpecificOutput":{"hookEventName":"SessionStart","additionalContext":"eyesoff is filtering this session: secret-looking strings in text and screenshots are removed before they reach the model. Rules for handling keys: never print, read or echo a secret value, and never read the clipboard (pbpaste, xclip, xsel, wl-paste, Get-Clipboard). To store a key shown in a web dashboard, click its Copy button, then run `eyesoff paste NAME --env .env`. To pass a key to a command that reads stdin, run `eyesoff paste NAME -- <command>`, for example `eyesoff paste API_TOKEN -- wrangler secret put API_TOKEN`. Text shown as [hidden by eyesoff] is a hidden secret; work around it and don't try to recover it. Drive the browser from this session (Claude in Chrome), never from the Chrome side panel, which talks to Anthropic directly."}}
+"hookSpecificOutput":{"hookEventName":"SessionStart","additionalContext":"eyesoff is filtering this session: secret-looking strings in text and screenshots are removed before they reach the model. Rules for handling keys: never print, read or echo a secret value, and never read the clipboard (pbpaste, xclip, xsel, wl-paste, Get-Clipboard). To store a key shown in a web dashboard, click its Copy button, then run `eyesoff paste NAME --env .env`. To pass a key to a command that reads stdin, run `eyesoff paste NAME -- <command>`, for example `eyesoff paste API_TOKEN -- wrangler secret put API_TOKEN`. Text shown as [hidden by eyesoff] is a hidden secret; work around it and don't try to recover it. Drive the browser from this session (Claude in Chrome), never from the Chrome side panel, which talks to Anthropic directly."}}
 EOF

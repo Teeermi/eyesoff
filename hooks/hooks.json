@@ -1,5 +1,5 @@
 {
-  "description": "Starts the eyesoff proxy if it isn't running and tells Claude how to handle keys, or says how to finish setup.",
+  "description": "Starts the eyesoff proxy if it isn't running, updates it when a new release is out, and tells Claude how to handle keys, or says how to finish setup.",
   "hooks": {
     "SessionStart": [
       {
@@ -7,7 +7,7 @@
           {
             "type": "command",
             "command": "sh \"${CLAUDE_PLUGIN_ROOT}/hooks/session-start.sh\"",
-            "timeout": 10
+            "timeout": 120
           }
         ]
       }

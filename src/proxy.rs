@@ -18,7 +18,10 @@ const HOP_HEADERS: &[&str] =
 pub fn start(port: u16) -> Result<()> {
     tokio::runtime::Runtime::new()?.block_on(async {
         let client = reqwest::Client::builder().connect_timeout(Duration::from_secs(30)).build()?;
-        let app = Router::new().fallback(forward).with_state(client);
+        let app = Router::new()
+            .route("/eyesoff/version", axum::routing::get(|| async { env!("CARGO_PKG_VERSION") }))
+            .fallback(forward)
+            .with_state(client);
         let listener =
             tokio::net::TcpListener::bind(("127.0.0.1", port)).await.with_context(|| format!("could not listen on 127.0.0.1:{port}"))?;
         println!("eyesoff is listening on http://127.0.0.1:{port}");
