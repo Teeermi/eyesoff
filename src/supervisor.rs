@@ -58,9 +58,6 @@ mod platform {
     pub fn install(exe: &Path) -> Result<bool> {
         let path = plist_path()?;
         let contents = plist_contents(exe, &log_path());
-        if fs::read_to_string(&path).ok().as_deref() == Some(contents.as_str()) {
-            return Ok(true);
-        }
         fs::create_dir_all(path.parent().unwrap())?;
         fs::write(&path, &contents)?;
         let _ = Command::new("launchctl").arg("unload").arg("-w").arg(&path).output();
@@ -111,15 +108,12 @@ mod platform {
         }
         let path = unit_path()?;
         let contents = unit_contents(exe);
-        if fs::read_to_string(&path).ok().as_deref() == Some(contents.as_str()) {
-            return Ok(true);
-        }
         fs::create_dir_all(path.parent().unwrap())?;
         fs::write(&path, &contents)?;
-        let _ = Command::new("pkill").args(["-f", &format!("{} start", exe.display())]).output();
         systemctl(&["daemon-reload"]).context("could not run systemctl")?;
-        let enabled = systemctl(&["enable", "--now", UNIT]).context("could not run systemctl")?;
-        Ok(enabled.status.success())
+        let enabled = systemctl(&["enable", UNIT]).context("could not run systemctl")?;
+        let restarted = systemctl(&["restart", UNIT]).context("could not run systemctl")?;
+        Ok(enabled.status.success() && restarted.status.success())
     }
 
     pub fn uninstall() {

@@ -22,17 +22,18 @@ pub fn add_to_claude_settings() -> Result<()> {
     };
     let changed = add_eyesoff(&mut settings).with_context(|| format!("left {} as is", path.display()))?;
 
-    if !proxy_listening() {
-        ensure_running()?;
-        if !(0..20).any(|_| {
-            sleep(Duration::from_millis(250));
-            proxy_listening()
-        }) {
-            bail!("the proxy didn't start, so {} was left as is. See {}", path.display(), log_path().display());
-        }
-        println!("Started the eyesoff proxy on {BASE_URL}");
+    let was_running = proxy_listening();
+    ensure_running()?;
+    if !(0..20).any(|_| {
+        sleep(Duration::from_millis(250));
+        proxy_listening()
+    }) {
+        bail!("the proxy didn't start, so {} was left as is. See {}", path.display(), log_path().display());
+    }
+    if was_running {
+        println!("Restarted the eyesoff proxy on {BASE_URL}");
     } else {
-        let _ = crate::supervisor::install(&std::env::current_exe()?);
+        println!("Started the eyesoff proxy on {BASE_URL}");
     }
 
     if changed {
